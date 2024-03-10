@@ -22,7 +22,7 @@ class EventController {
     readAll(req,res) {
         const events = eventService.readAll();
 
-        res.render("../views/events.ejs", {pageTitle: "tit"});
+        res.send(events)
     }
 
     update(req,res) {

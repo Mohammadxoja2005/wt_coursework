@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Update An Event</h1>
+<form style="margin-bottom: 20px">
+    <label for="date">Date:</label><br>
+    <input type="date" id="date" name="date"><br><br>
+    <label for="location">Location:</label><br>
+    <input type="text" id="location" name="location"><br><br>
+    <labe>Description</labe>
+    <br>
+    <input type="text" id="description" name="description">
+    <button class="update_event">update</button>
+</form>
+
+</body>
+
+<script>
+    class Renderer {
+        constructor() {
+            this.events = null;
+        }
+
+        async getAllEvents() {
+            const response = await fetch("/events/data")
+            this.events = await response.json();
+        }
+
+        async renderEvent() {
+            const url = window.location.href;
+            const parts = url.split('/');
+            const uniqueIdentifier = parts[parts.length - 1];
+
+            const event = this.events.find((event) => {
+                if (event.id == uniqueIdentifier) {
+                    return event
+                }
+            })
+
+            const inputs = document.querySelectorAll("input");
+            const updateBtn = document.querySelector(".update_event");
+
+            const updateObj = {
+                id: uniqueIdentifier,
+                date: null,
+                location: null,
+                description: null
+            };
+
+            inputs.forEach((input) => {
+                if (input.name == "date") {
+                    input.value = event.date;
+                    updateObj.date = event.date;
+                }
+
+                if (input.name == "location") {
+                    input.value = event.location;
+                    updateObj.location = event.location;
+                }
+
+                if (input.name == "description") {
+                    input.value = event.description;
+                    updateObj.description = event.description;
+                }
+
+                input.addEventListener("change", (e) => {
+                    e.preventDefault();
+
+                    updateObj[input.name] = e.target.value;
+                })
+            })
+
+            updateBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+
+                fetch("/events/update", {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateObj)
+                }).then((res) => {
+                    alert("updated successfully")
+                    window.location.href = "/";
+                })
+            })
+        }
+    }
+
+    const renderer = new Renderer();
+
+    Promise.resolve()
+        .then(() => renderer.getAllEvents())
+        .then(() => renderer.renderEvent())
+
+</script>
+
+</html>

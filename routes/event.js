@@ -5,8 +5,8 @@ const EventController = require("../controllers/event");
 const eventController = new EventController();
 
 router.post("/create", eventController.createEvent);
-router.get("/:id", eventController.readEventById);
-router.get("/", eventController.readAll);
+router.post("/:id", eventController.readEventById);
+router.get("/data", eventController.readAll);
 router.delete("/:id", eventController.deleteById);
 router.put("/update", eventController.update);
 

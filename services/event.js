@@ -1,14 +1,10 @@
 const assert = require('assert');
+const { v4: uuidv4 } = require('uuid');
 
 class EventService {
     constructor() {
         const events = [
-            {
-                id: 1,
-                date: Date.now(),
-                location: "Tashkent",
-                description: "lorem ip sum"
-            }
+
         ];
         this.events = events;
     }
@@ -29,6 +25,8 @@ class EventService {
 
     create(event) {
         const eventKeys = Object.keys(event);
+
+        event.id = uuidv4();
 
         try {
             assert.deepEqual(eventKeys, [ 'id', 'date', 'location', 'description' ]);
@@ -53,7 +51,9 @@ class EventService {
     }
 
     deleteById(id) {
-        this.events.filter(event => event.id !== id)
+        const result = this.events.filter(event => event.id !== id)
+
+        this.events = result;
 
         return this.events;
     }
